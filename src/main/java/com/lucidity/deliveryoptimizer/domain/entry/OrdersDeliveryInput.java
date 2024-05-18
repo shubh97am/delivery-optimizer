@@ -10,6 +10,6 @@ import java.util.List;
 public class OrdersDeliveryInput {
     //in our case we are trying to solve only for two orders at particular time
 
-    Long deliveryAgentId;
-    List<Long> orderIds;
+    private Long deliveryAgentId;
+    private List<Long> orderIds;
 }

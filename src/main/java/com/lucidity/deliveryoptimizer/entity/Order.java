@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@Table(name = "order")
+@Table(name = "order_detail")
 @NamedQueries(value = {
         @NamedQuery(name = Order.FETCH_ACTIVE_ORDERS_COUNT_FOR_DELIVERY_AGENT, query = "select count(*) from Order where deliveryAgentId =:deliveryAgentId and (orderStatus=:assignedStatus or orderStatus=:pickedStatus)"),
         @NamedQuery(name = Order.FETCH_ACTIVE_ORDERS_FOR_DELIVERY_AGENT, query = "from Order where deliveryAgentId =:deliveryAgentId and (orderStatus=:assignedStatus or orderStatus=:pickedStatus)"),
@@ -65,12 +65,15 @@ public class Order extends LongIDJPAEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "assigned_on")
     private Date assignedOn;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "picked_on")
     private Date pickedOn;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "delivered_on")
     private Date deliveredOn;
 

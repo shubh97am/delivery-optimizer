@@ -19,7 +19,7 @@ public interface OrderFulfillmentApi {
     public ResponseEntity<Response> assignOrder(@RequestBody AssignOrderInput input);
 
 
-    @PostMapping(Constant.OrderFulfillmentController.GET_ACTIVE_ORDERS_FOR_AGENT)
+    @GetMapping(Constant.OrderFulfillmentController.GET_ACTIVE_ORDERS_FOR_AGENT)
     public ResponseEntity<Response> getActiveOrdersForAgent(@PathVariable("agentId") Long agentId);
 
     @PostMapping(Constant.OrderFulfillmentController.EXECUTE_DELIVERY_TASK)

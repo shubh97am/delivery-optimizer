@@ -1,6 +1,6 @@
 use delivery;
 
-CREATE TABLE `order`
+CREATE TABLE `order_detail`
 (
     `id`                             bigint(20)                              NOT NULL AUTO_INCREMENT,
     `restaurant_id`                  bigint(20)                              NOT NULL,

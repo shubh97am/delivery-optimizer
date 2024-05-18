@@ -19,8 +19,8 @@ public class OrderDaoImpl extends CrudJPADAOImpl<Order, Long> implements OrderDa
         try {
             Query query = getEntityManager().createNamedQuery(Order.FETCH_ACTIVE_ORDERS_COUNT_FOR_DELIVERY_AGENT);
             query.setParameter("deliveryAgentId", deliveryAgentId);
-            query.setParameter("assignedStatus", OrderStatus.ASSIGNED.name());
-            query.setParameter("pickedStatus", OrderStatus.PICKED.name());
+            query.setParameter("assignedStatus", OrderStatus.ASSIGNED);
+            query.setParameter("pickedStatus", OrderStatus.PICKED);
             return Optional.ofNullable(((Long) query.getSingleResult()).longValue()).orElse(0L);
         } catch (NoResultException e) {
             return 0L;
@@ -32,8 +32,8 @@ public class OrderDaoImpl extends CrudJPADAOImpl<Order, Long> implements OrderDa
         try {
             Query query = getEntityManager().createNamedQuery(Order.FETCH_ACTIVE_ORDERS_FOR_DELIVERY_AGENT);
             query.setParameter("deliveryAgentId", deliveryAgentId);
-            query.setParameter("assignedStatus", OrderStatus.ASSIGNED.name());
-            query.setParameter("pickedStatus", OrderStatus.PICKED.name());
+            query.setParameter("assignedStatus", OrderStatus.ASSIGNED);
+            query.setParameter("pickedStatus", OrderStatus.PICKED);
             return (List<Order>) query.getResultList();
         } catch (NoResultException e) {
             return null;
