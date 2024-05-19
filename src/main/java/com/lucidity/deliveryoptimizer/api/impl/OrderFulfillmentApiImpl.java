@@ -44,8 +44,8 @@ public class OrderFulfillmentApiImpl implements OrderFulfillmentApi {
 
     @Override
     @EnableLogging
-    public ResponseEntity<Response> executeDeliveryTask(OrdersDeliveryInput input) {
-        OrderDeliveryFlowEntry tasks = orderFulfilmentService.executeDeliveryTask(input);
+    public ResponseEntity<Response> calculateMinCostPath(OrdersDeliveryInput input) {
+        OrderDeliveryFlowEntry tasks = orderFulfilmentService.calculateMinCostPath(input);
         return APIResponse.renderSuccess(tasks, 200, HttpStatus.OK);
     }
 }

@@ -22,6 +22,6 @@ public interface OrderFulfillmentApi {
     @GetMapping(Constant.OrderFulfillmentController.GET_ACTIVE_ORDERS_FOR_AGENT)
     public ResponseEntity<Response> getActiveOrdersForAgent(@PathVariable("agentId") Long agentId);
 
-    @PostMapping(Constant.OrderFulfillmentController.EXECUTE_DELIVERY_TASK)
-    public ResponseEntity<Response> executeDeliveryTask(@RequestBody OrdersDeliveryInput input);
+    @PostMapping(Constant.OrderFulfillmentController.FIND_MIN_COST_PATH)
+    public ResponseEntity<Response> calculateMinCostPath(@RequestBody OrdersDeliveryInput input);
 }

@@ -74,7 +74,11 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
         order.setRestaurantLongitude(restaurantEntry.getAddress().getLongitude());
         //here we can configure this time on basis of  food item and restaurant
         //but here generating random numbers to simplify this
-        order.setMinTimeToPrepareInMinutes(MinPrepareTimeGenerator.generateMinOrderPrepareTime());
+        if (input.getMinTimeToPrepareInMin() != null) {
+            order.setMinTimeToPrepareInMinutes(input.getMinTimeToPrepareInMin());
+        } else {
+            order.setMinTimeToPrepareInMinutes(MinPrepareTimeGenerator.generateMinOrderPrepareTime());
+        }
 
 
         order.setUserId(userEntry.getId());
@@ -142,7 +146,7 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
         return orderManager.getActiveOrdersForAgent(agentId);
     }
 
-    public OrderDeliveryFlowEntry executeDeliveryTask(OrdersDeliveryInput input) {
+    public OrderDeliveryFlowEntry calculateMinCostPath(OrdersDeliveryInput input) {
 
         if (input == null || input.getOrderIds() == null || input.getOrderIds().isEmpty() || input.getDeliveryAgentId() == null) {
             throw new RuntimeException("Empty Input for DeliveryTaskAssignment");

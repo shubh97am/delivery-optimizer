@@ -75,7 +75,7 @@ public class Constant {
         public static final String PLACE_ORDER = "/orders";
         public static final String ASSIGN_ORDER = "/orders/assignOrder";
         public static final String GET_ACTIVE_ORDERS_FOR_AGENT = "/orders/agent/{agentId}/fetch/active";
-        public static final String EXECUTE_DELIVERY_TASK = "/orders/execute/delivery";
+        public static final String FIND_MIN_COST_PATH = "/orders/findMinCostPath";
 
     }
 

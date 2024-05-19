@@ -24,5 +24,23 @@ public class OrderDeliveryFlowEntry {
         private Date startingTime;
         private Date finishTime;
 
+        @Override
+        public String toString() {
+            return "Flow{" +
+                    "source='" + source + '\'' +
+                    ", destination='" + destination + '\'' +
+                    ", cost=" + cost +
+                    ", startingTime=" + startingTime +
+                    ", finishTime=" + finishTime +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDeliveryFlowEntry{" +
+                "totalCost=" + totalCost +
+                ", taskFlow=" + taskFlow +
+                '}';
     }
 }

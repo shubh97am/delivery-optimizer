@@ -53,4 +53,29 @@ public class OrderEntry extends IDBaseEntry<Long> {
     private Date deliveredOn;
 
     private Long deliveryAgentId;
+
+    @Override
+    public String toString() {
+        return "OrderEntry{" +
+                "id=" + id +
+                ", restaurantId=" + restaurantId +
+                ", restaurantName='" + restaurantName + '\'' +
+                ", restaurantPhone='" + restaurantPhone + '\'' +
+                ", restaurantAddress='" + restaurantAddress + '\'' +
+                ", restaurantLatitude=" + restaurantLatitude +
+                ", restaurantLongitude=" + restaurantLongitude +
+                ", minTimeToPrepareInMinutes=" + minTimeToPrepareInMinutes +
+                ", userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", userAddress='" + userAddress + '\'' +
+                ", userLatitude=" + userLatitude +
+                ", userLongitude=" + userLongitude +
+                ", orderStatus=" + orderStatus +
+                ", assignedOn=" + assignedOn +
+                ", pickedOn=" + pickedOn +
+                ", deliveredOn=" + deliveredOn +
+                ", deliveryAgentId=" + deliveryAgentId +
+                '}';
+    }
 }

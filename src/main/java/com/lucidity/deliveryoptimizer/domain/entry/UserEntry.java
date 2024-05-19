@@ -30,6 +30,7 @@ public class UserEntry extends IDBaseEntry<Long> {
                 ", gender=" + gender +
                 ", age=" + age +
                 ", phone='" + phone + '\'' +
+                ", address=" + address +
                 '}';
     }
 }

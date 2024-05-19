@@ -17,5 +17,5 @@ public interface OrderFulfilmentService {
     public List<OrderEntry> getActiveOrdersForDeliveryAgent(Long agentId);
 
     @Transactional(rollbackFor = Exception.class)
-    public OrderDeliveryFlowEntry executeDeliveryTask(OrdersDeliveryInput input);
+    public OrderDeliveryFlowEntry calculateMinCostPath(OrdersDeliveryInput input);
 }

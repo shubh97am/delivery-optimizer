@@ -24,4 +24,17 @@ public class DeliveryAgentEntry extends IDBaseEntry<Long> {
     //if not then we won't assign new orders to that particular delivery agent
     private Boolean onDuty;
 
+
+    @Override
+    public String toString() {
+        return "DeliveryAgentEntry{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                ", phone='" + phone + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", onDuty=" + onDuty +
+                '}';
+    }
 }
