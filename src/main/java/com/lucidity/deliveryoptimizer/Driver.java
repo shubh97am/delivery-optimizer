@@ -2,7 +2,10 @@ package com.lucidity.deliveryoptimizer;
 
 import com.lucidity.deliveryoptimizer.domain.entry.*;
 import com.lucidity.deliveryoptimizer.domain.enumuration.Gender;
-import com.lucidity.deliveryoptimizer.manager.*;
+import com.lucidity.deliveryoptimizer.manager.DeliveryAgentManager;
+import com.lucidity.deliveryoptimizer.manager.OrderFulfilmentService;
+import com.lucidity.deliveryoptimizer.manager.RestaurantManager;
+import com.lucidity.deliveryoptimizer.manager.UserManager;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

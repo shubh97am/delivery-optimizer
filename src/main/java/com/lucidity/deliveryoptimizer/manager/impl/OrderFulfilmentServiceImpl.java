@@ -9,7 +9,6 @@ import com.lucidity.deliveryoptimizer.domain.entry.*;
 import com.lucidity.deliveryoptimizer.domain.enumuration.OrderStatus;
 import com.lucidity.deliveryoptimizer.manager.*;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
