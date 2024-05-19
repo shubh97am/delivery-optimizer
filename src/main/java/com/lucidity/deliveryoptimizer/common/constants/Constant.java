@@ -79,6 +79,8 @@ public class Constant {
         public static final String GET_ACTIVE_ORDERS_FOR_AGENT = "/orders/agent/{agentId}/fetch/active";
         public static final String FIND_MIN_COST_PATH = "/orders/findMinCostPath";
 
+        public static final String RUNNER = "/orders/logicrunner";
+
     }
 
     public static class Logging {

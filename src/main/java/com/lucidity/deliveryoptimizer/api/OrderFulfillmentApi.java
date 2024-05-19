@@ -24,4 +24,8 @@ public interface OrderFulfillmentApi {
 
     @PostMapping(Constant.OrderFulfillmentController.FIND_MIN_COST_PATH)
     public ResponseEntity<Response> calculateMinCostPath(@RequestBody OrdersDeliveryInput input);
+
+
+    @PostMapping(Constant.OrderFulfillmentController.RUNNER)
+    public ResponseEntity<Response> runner();
 }

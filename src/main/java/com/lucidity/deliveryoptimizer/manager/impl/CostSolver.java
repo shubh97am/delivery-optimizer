@@ -3,6 +3,7 @@ package com.lucidity.deliveryoptimizer.manager.impl;
 
 import com.lucidity.deliveryoptimizer.calculator.distance.DistanceCalculatorContext;
 import com.lucidity.deliveryoptimizer.calculator.distance.HaversineDistanceCalculatorStrategy;
+import com.lucidity.deliveryoptimizer.common.constants.Constant;
 import com.lucidity.deliveryoptimizer.domain.entry.AllPossiblePathEntry;
 import com.lucidity.deliveryoptimizer.domain.entry.DeliveryAgentEntry;
 import com.lucidity.deliveryoptimizer.domain.entry.OrderEntry;
@@ -154,7 +155,6 @@ public class CostSolver {
 
     static double calculateTotalTime(Map<String, List<Edge>> graph, Map<String, Location> locations, List<String> path) {
         double totalTime = 0.0;
-        double currentTime = 0.0;
 
         for (int i = 0; i < path.size() - 1; i++) {
             String currentLocation = path.get(i);
@@ -168,17 +168,15 @@ public class CostSolver {
                 }
             }
 
-            double travelTime = distance / 20.0; // Convert distance to hours at 20 km/hr
+            double travelTime = distance / Constant.Common.AVG_SPEED_OF_DELIVERY_AGENT; // Convert distance to hours at 20 km/hr
             double prepareTime = locations.get(nextLocation).prepareTime;
 
-            // Check if the travel time from the starting point is less than the prepare time
-            if (i == 0 && travelTime < prepareTime) {
-                currentTime += prepareTime;
+            // Check if the total travel time from the starting point is less than the prepare time
+            if (totalTime + travelTime < prepareTime) {
+                totalTime = prepareTime;
             } else {
-                currentTime += Math.max(prepareTime, travelTime);
+                totalTime = totalTime + travelTime;
             }
-
-            totalTime = currentTime;
         }
 
         return totalTime;

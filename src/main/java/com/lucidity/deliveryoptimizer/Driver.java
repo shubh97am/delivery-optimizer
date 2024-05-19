@@ -16,20 +16,20 @@ import java.util.List;
 public class Driver {
 
 
-    static UserManager userManager;
-    static RestaurantManager restaurantManager;
+    private final UserManager userManager;
+    private final RestaurantManager restaurantManager;
+    private final DeliveryAgentManager deliveryAgentManager;
+    private final OrderFulfilmentService orderFulfilmentService;
 
-    static DeliveryAgentManager deliveryAgentManager;
-
-    static OrderFulfilmentService orderFulfilmentService;
-
-
-    public static void main(String[] args) {
-
+    public Driver(UserManager userManager, RestaurantManager restaurantManager, DeliveryAgentManager deliveryAgentManager, OrderFulfilmentService orderFulfilmentService) {
+        this.userManager = userManager;
+        this.restaurantManager = restaurantManager;
+        this.deliveryAgentManager = deliveryAgentManager;
+        this.orderFulfilmentService = orderFulfilmentService;
     }
 
-    private void run() {
 
+    public AllPossiblePathEntry runner() {
 
         //setting up Customer1
         //@here change phone number every time in this request since there is uniqueness on phone number on user table
@@ -213,6 +213,6 @@ public class Driver {
         System.out.println("Path Found Successfully");
 
         System.out.println(trace);
-
+        return trace;
     }
 }
