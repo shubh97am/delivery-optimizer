@@ -23,8 +23,13 @@ public class Driver {
 
     public static void main(String[] args) {
 
+    }
+
+    private void run() {
+
 
         //setting up Customer1
+        //@here change phone number every time in this request since there is uniqueness on phone number on user table
         UserEntry customer1 = new UserEntry();
         customer1.setName("Customer1");
         customer1.setPhone("917272727229");
@@ -49,6 +54,7 @@ public class Driver {
         System.out.println();
 
         //setting up Customer2
+        //@here change phone number every time in this request since there is uniqueness on phone number on user table
         UserEntry customer2 = new UserEntry();
         customer2.setName("Customer2");
         customer2.setPhone("918392929291");
@@ -200,11 +206,10 @@ public class Driver {
         orderIds.add(order2.getId());
         ordersDeliveryInput.setOrderIds(orderIds);
         System.out.println("Finding Minimum Cost Path");
-        OrderDeliveryFlowEntry trace = orderFulfilmentService.calculateMinCostPath(ordersDeliveryInput);
+        AllPossiblePathEntry trace = orderFulfilmentService.calculateMinCostPath(ordersDeliveryInput);
         System.out.println("Path Found Successfully");
 
         System.out.println(trace);
-
 
     }
 }

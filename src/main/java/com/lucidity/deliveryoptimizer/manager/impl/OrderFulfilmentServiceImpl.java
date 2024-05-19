@@ -1,17 +1,18 @@
 package com.lucidity.deliveryoptimizer.manager.impl;
 
+import com.lucidity.deliveryoptimizer.calculator.cost.TravelingCostCalculator;
+import com.lucidity.deliveryoptimizer.calculator.distance.DistanceCalculatorContext;
+import com.lucidity.deliveryoptimizer.calculator.distance.HaversineDistanceCalculatorStrategy;
 import com.lucidity.deliveryoptimizer.common.constants.Constant;
 import com.lucidity.deliveryoptimizer.common.util.MinPrepareTimeGenerator;
 import com.lucidity.deliveryoptimizer.domain.entry.*;
 import com.lucidity.deliveryoptimizer.domain.enumuration.OrderStatus;
 import com.lucidity.deliveryoptimizer.manager.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
@@ -22,11 +23,14 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
 
     private final OrderManager orderManager;
 
-    public OrderFulfilmentServiceImpl(RestaurantManager restaurantManager, UserManager userManager, DeliveryAgentManager deliveryAgentManager, OrderManager orderManager) {
+    private final CostSolver costSolver;
+
+    public OrderFulfilmentServiceImpl(RestaurantManager restaurantManager, UserManager userManager, DeliveryAgentManager deliveryAgentManager, OrderManager orderManager, CostSolver costSolver) {
         this.restaurantManager = restaurantManager;
         this.userManager = userManager;
         this.deliveryAgentManager = deliveryAgentManager;
         this.orderManager = orderManager;
+        this.costSolver = costSolver;
     }
 
 
@@ -74,7 +78,7 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
         order.setRestaurantLongitude(restaurantEntry.getAddress().getLongitude());
         //here we can configure this time on basis of  food item and restaurant
         //but here generating random numbers to simplify this
-        if (input.getMinTimeToPrepareInMin() != null) {
+        if (input.getMinTimeToPrepareInMin() != null && input.getMinTimeToPrepareInMin() >= 0) {
             order.setMinTimeToPrepareInMinutes(input.getMinTimeToPrepareInMin());
         } else {
             order.setMinTimeToPrepareInMinutes(MinPrepareTimeGenerator.generateMinOrderPrepareTime());
@@ -146,15 +150,17 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
         return orderManager.getActiveOrdersForAgent(agentId);
     }
 
-    public OrderDeliveryFlowEntry calculateMinCostPath(OrdersDeliveryInput input) {
+    public AllPossiblePathEntry calculateMinCostPath(OrdersDeliveryInput input) {
 
         if (input == null || input.getOrderIds() == null || input.getOrderIds().isEmpty() || input.getDeliveryAgentId() == null) {
             throw new RuntimeException("Empty Input for DeliveryTaskAssignment");
         }
 
+        DistanceCalculatorContext distanceCalculatorContext = new DistanceCalculatorContext(new HaversineDistanceCalculatorStrategy());
         //here assuming that all orders assigned to deliveryAgent at the same time
 
-        Map<Long, OrderEntry> orders = new HashMap<>();
+        //assuming we have only max two orders
+        List<OrderEntry> orders = new ArrayList<>();
         for (Long orderId : input.getOrderIds()) {
             OrderEntry orderEntry = orderManager.getOrder(orderId);
             if (orderEntry != null
@@ -162,9 +168,71 @@ public class OrderFulfilmentServiceImpl implements OrderFulfilmentService {
                     && orderEntry.getDeliveryAgentId().equals(input.getDeliveryAgentId())
                     && orderEntry.getOrderStatus() != null
                     && (OrderStatus.ASSIGNED == orderEntry.getOrderStatus() || OrderStatus.PICKED == orderEntry.getOrderStatus())) {
-                orders.put(orderEntry.getId(), orderEntry);
+                orders.add(orderEntry);
             }
         }
+
+        DeliveryAgentEntry agent = deliveryAgentManager.getAgent(input.getDeliveryAgentId());
+
+        if (agent == null || agent.getId() == null || agent.getLatitude() == null || agent.getLongitude() == null) {
+            throw new RuntimeException("Something Went Wrong With Agent Current Location");
+        }
+
+        //we will process only two orders at a time
+
+        //do below steps for all combinations
+        //here we are assuming that restaurant starts order preparation only after it assigned to agent(it should be on basis of order created on but to keep calculations simple we are using assignment time)
+        //possible paths to deliver order
+        //cost1=cost from agent to R1 min(Order1PrepareTime in min ,distance km /20kmhr -> in min)
+        //cost2= cost from  R1 to C1 = distance/20
+        //cost3 =cost from c1-> R2 min(cost1+cost2, Order2PrepareTime in min)
+        //cost4 = cost from R2-> C2 = distance/20
+//        Agent -> R1 -> C1 -> R2 -> C2
+//        Agent -> R2 -> C2 -> R1 -> C1
+//        Agent -> R1 -> R2 -> C1 -> C2
+//        Agent -> R1 -> R2 -> C2 -> C1
+//        Agent -> R2 -> R1 -> C1 -> C2
+//        Agent -> R2 -> R1 -> C2 -> C1
+
+
+        //        Agent -> R1 -> C1 -> R2 -> C2
+
+        if (orders.size() >= 2) {
+            //we will process only two orders at a time
+            OrderEntry order1 = orders.get(0);
+            OrderEntry order2 = orders.get(1);
+
+            AllPossiblePathEntry trace = costSolver.calculateMinCost(agent, order1, order2);
+
+            return trace;
+
+        } else if (orders.size() == 1) {
+            //then only one path possible
+            //Agent->R1->C1
+            OrderEntry order = orders.get(0);
+
+
+            //agentToRestaurantCost= max of (order preparation time , agent location to restaurant traveling cost)
+            //restaurantToCustomerCost => restaurant to customer traveling cost
+            double agentToRestaurantCost = Math.max(TravelingCostCalculator.calculateTravelingCostInMinutes(distanceCalculatorContext.calculateDistance(agent.getLatitude(), agent.getLongitude(), order.getRestaurantLatitude(), order.getRestaurantLongitude()), Constant.Common.AVG_SPEED_OF_DELIVERY_AGENT), order.getMinTimeToPrepareInMinutes());
+
+            double restaurantToCustomerCost = TravelingCostCalculator.calculateTravelingCostInMinutes(distanceCalculatorContext.calculateDistance(order.getRestaurantLatitude(), order.getRestaurantLongitude(), order.getUserLatitude(), order.getUserLongitude()), Constant.Common.AVG_SPEED_OF_DELIVERY_AGENT);
+
+            double totalCost = agentToRestaurantCost + restaurantToCustomerCost;
+
+            AllPossiblePathEntry trace = new AllPossiblePathEntry();
+
+            List<String> path = Arrays.asList(agent.getName(), order.getRestaurantName(), order.getUserName());
+            PathEntry minCostPath = new PathEntry();
+            minCostPath.setPathCost(totalCost);
+            minCostPath.setPath(path);
+
+            trace.setMinCostPath(minCostPath);
+            trace.setAllPossiblePath(Collections.singletonList(minCostPath));
+
+            return trace;
+        }
+
 
         return null;
 

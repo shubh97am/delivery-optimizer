@@ -11,6 +11,8 @@ public class Constant {
         }
 
         public static final Long ACTIVE_ORDER_THRESHHOLD_VALUE_FOR_AGENT = 2L;
+
+        public static final double AVG_SPEED_OF_DELIVERY_AGENT = 20.0; // IN KMPH
     }
 
 
